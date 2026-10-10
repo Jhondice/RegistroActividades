@@ -7,6 +7,7 @@ import { createRemoteClient } from '../api/remoteClient.js';
 import { ApiError } from '../api/errors.js';
 
 const CONN_KEY = 'fet.seguimiento.conexion.v1';
+const THEME_KEY = 'fet.seguimiento.theme.v1';
 const DEFAULT_REMOTE_URL = 'https://script.google.com/macros/s/AKfycbwhPFpARBKKgFqJ3oWuYSSTUXMPzDgXT8BdJKBxD8mqxODa5ycFbjT-jndKPDctsnu-/exec';
 
 function loadSavedConnection() {
@@ -39,6 +40,22 @@ export const state = {
   ui: { tab: 'dashboard', period: null, calendarDate: new Date() },
 };
 
+function loadSavedTheme() {
+  try { return localStorage.getItem(THEME_KEY) || null; } catch { return null; }
+}
+
+function saveTheme(theme) {
+  try { if (theme) localStorage.setItem(THEME_KEY, theme); else localStorage.removeItem(THEME_KEY); } catch { /* ignore */ }
+}
+
+function applyTheme(theme) {
+  try {
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    }
+  } catch { /* ignore in non-browser env */ }
+}
+
 let client = null;
 let token = null;
 
@@ -59,6 +76,16 @@ function setState(patch) {
 /** Se llama una vez, al arrancar la aplicación. */
 export async function init() {
   const saved = loadSavedConnection();
+  // Inicializar tema antes de cargar vistas
+  const savedTheme = loadSavedTheme();
+  if (savedTheme) {
+    setState({ ui: { ...state.ui, theme: savedTheme } });
+    applyTheme(savedTheme);
+  } else {
+    // por defecto 'light'
+    setState({ ui: { ...state.ui, theme: 'light' } });
+    applyTheme('light');
+  }
   if (saved) {
     try {
       await connectRemote(saved.url, saved.token);
@@ -68,6 +95,17 @@ export async function init() {
     }
   }
   await connectLocal();
+}
+
+export function setTheme(theme) {
+  setState({ ui: { ...state.ui, theme } });
+  saveTheme(theme);
+  applyTheme(theme);
+}
+
+export function toggleTheme() {
+  const next = state.ui && state.ui.theme === 'dark' ? 'light' : 'dark';
+  setTheme(next);
 }
 
 export async function connectLocal() {

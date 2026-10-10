@@ -1,6 +1,6 @@
 import './styles.css';
 import { icon } from './ui/icons.js';
-import { state, subscribe, init, setTab, setPeriodFilter, describeError } from './state/store.js';
+import { state, subscribe, init, setTab, setPeriodFilter, describeError, toggleTheme } from './state/store.js';
 import { destroyAllCharts } from './services/charts.js';
 import * as dashboard from './views/dashboard.js';
 import * as plan from './views/plan.js';
@@ -38,6 +38,9 @@ function shellHtml() {
           <select data-role="period-select" class="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-fet-green">
             ${state.catalogs.periodo.map((p) => `<option value="${p}" ${p === state.ui.period ? 'selected' : ''}>${p}</option>`).join('')}
           </select>
+          <button data-role="theme-toggle" title="Alternar tema" class="rounded-full border px-3 py-1.5 text-xs font-bold bg-white hover:bg-slate-50">
+            ${state.ui.theme === 'dark' ? '🌙 Oscuro' : '🌞 Claro'}
+          </button>
           <span title="${isLocal ? 'Modo demostración (datos locales)' : `Conectado · rol ${state.role}`}" class="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold ${isLocal ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-emerald-300 bg-emerald-50 text-emerald-700'}">
             ${icon(isLocal ? 'cloud-off' : 'cloud', 'w-3.5 h-3.5')} ${isLocal ? 'Demostración' : 'Google Sheets'}
           </span>
@@ -104,6 +107,8 @@ function wireShell() {
   document.querySelectorAll('[data-tab]').forEach((btn) => btn.addEventListener('click', () => setTab(btn.dataset.tab)));
   const periodSelect = document.querySelector('[data-role="period-select"]');
   if (periodSelect) periodSelect.addEventListener('change', (e) => setPeriodFilter(e.target.value));
+  const themeBtn = document.querySelector('[data-role="theme-toggle"]');
+  if (themeBtn) themeBtn.addEventListener('click', () => toggleTheme());
 }
 
 subscribe(paint);
