@@ -17,6 +17,7 @@ describe('backend/Code.gs — instalación y autenticación', () => {
     assert.ok(env.props.get('ADMIN_TOKEN').length >= 16);
     assert.ok(env.props.get('VIEWER_TOKEN').length >= 16);
     assert.notEqual(env.props.get('ADMIN_TOKEN'), env.props.get('VIEWER_TOKEN'));
+    env.run('setup()');
   });
 
   test('rechaza un token inválido', () => {
@@ -45,6 +46,86 @@ describe('backend/Code.gs — instalación y autenticación', () => {
     const res = env.call('ping', {}, 'x'.repeat(20));
     assert.equal(res.ok, false);
     assert.equal(res.error.code, 'NOT_SETUP');
+  });
+});
+
+describe('backend/Code.gs — recordatorios por correo', () => {
+  test('instala un único activador diario a las 8:00 y se puede repetir sin duplicados', () => {
+    const env = setup();
+    env.run('setupActivityReminders()');
+    env.run('setupActivityReminders()');
+
+    assert.equal(env.triggers.length, 1);
+    assert.equal(env.triggers[0].handler, 'sendActivityReminders');
+    assert.equal(env.triggers[0].days, 1);
+    assert.equal(env.triggers[0].hour, 8);
+    assert.equal(env.triggers[0].timeZone, 'America/Bogota');
+  });
+
+  test('envía alertas a 3 y 1 día, excluye completadas y no duplica envíos', () => {
+    const env = setup();
+    const create = (nombre, fecha_fin, estado = 'En desarrollo') => env.call('createActivity', {
+      periodo: '2026-2',
+      nombre,
+      tipo: 'Académica',
+      linea: 'Docencia',
+      responsable: 'Docente',
+      fecha_inicio: '2026-09-01',
+      fecha_fin,
+      avance: estado === 'Completada' ? 100 : 50,
+      estado,
+      observaciones: '',
+    }).data.activity;
+
+    create('Finaliza en tres días', '2026-09-30');
+    create('Finaliza mañana', '2026-09-28');
+    create('Ya completada', '2026-09-30', 'Completada');
+
+    assert.equal(env.run("sendActivityRemindersForDate_('2026-09-27')"), 2);
+    assert.equal(env.sentEmails.length, 2);
+    assert.ok(env.sentEmails.every((email) => email.to === 'direccion_software@fet.edu.co'));
+    assert.ok(env.sentEmails.some((email) => email.subject.includes('3 días')));
+    assert.ok(env.sentEmails.some((email) => email.subject.includes('1 día')));
+    assert.ok(env.sentEmails.every((email) => !email.body.includes('Ya completada')));
+
+    assert.equal(env.run("sendActivityRemindersForDate_('2026-09-27')"), 0);
+    assert.equal(env.sentEmails.length, 2);
+
+    const activity = env.call('bootstrap').data.activities.find((item) => item.nombre === 'Finaliza en tres días');
+    const marker = 'REMINDER_SENT_' + activity.id + '_' + activity.creado.replace(/\D/g, '') + '_3_2026-09-30';
+    assert.ok(env.props.has(marker));
+    env.call('updateActivity', { id: activity.id, fecha_fin: '2026-10-01' });
+    assert.ok(env.props.has(marker));
+  });
+
+  test('no envía aviso fuera de los plazos de 3 y 1 días', () => {
+    const env = setup();
+    env.call('createActivity', {
+      periodo: '2026-2',
+      nombre: 'Más adelante',
+      tipo: 'Académica',
+      linea: 'Docencia',
+      responsable: 'Docente',
+      fecha_inicio: '2026-09-01',
+      fecha_fin: '2026-09-29',
+      avance: 50,
+      estado: 'En desarrollo',
+      observaciones: '',
+    });
+
+    assert.equal(env.run("sendActivityRemindersForDate_('2026-09-27')"), 0);
+    assert.equal(env.sentEmails.length, 0);
+  });
+
+  test('rechaza la fecha de ejecución con formato inválido', () => {
+    const env = setup();
+    assert.throws(() => env.run("sendActivityRemindersForDate_('27-09-2026')"), /AAAA-MM-DD/);
+  });
+
+  test('la autorización manual comprueba el servicio de correo sin enviar mensajes', () => {
+    const env = setup();
+    assert.match(env.run('authorizeActivityReminders()'), /verificada/);
+    assert.equal(env.sentEmails.length, 0);
   });
 });
 

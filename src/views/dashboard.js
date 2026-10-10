@@ -27,7 +27,7 @@ export function render() {
     <div class="space-y-6">
       <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         ${KPI_CARDS.map((c) => `
-          <div class="flex items-center justify-between rounded-xl border-l-4 bg-white p-4 shadow-sm ${c.accent.split(' ')[0]}">
+          <div class="flex items-center justify-between rounded-xl border-l-4 bg-white p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow ${c.accent.split(' ')[0]}" data-filter-estado="${c.key === 'total' ? 'TODOS' : c.key === 'enDesarrollo' ? 'En desarrollo' : c.key === 'completadas' ? 'Completada' : c.key === 'pendientes' ? 'Pendiente' : 'Atrasada'}" title="Haz clic para filtrar en el plan">
             <div>
               <p class="text-[11px] font-semibold uppercase text-slate-500">${c.label}</p>
               <h3 class="text-2xl font-black text-slate-800">${kpis[c.key]}</h3>
@@ -104,6 +104,17 @@ export function render() {
 
 export function mount(root) {
   root.querySelectorAll('[data-goto]').forEach((btn) => btn.addEventListener('click', () => setTab(btn.dataset.goto)));
+
+  // Agregar listeners para los filtros de KPI
+  root.querySelectorAll('[data-filter-estado]').forEach((card) => {
+    card.addEventListener('click', () => {
+      const estado = card.dataset.filterEstado;
+      if (estado) {
+        state.ui.filterEstado = estado;
+        setTab('plan');
+      }
+    });
+  });
 
   const acts = byPeriod();
   const kpis = computeKpis(acts);

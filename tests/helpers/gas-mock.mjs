@@ -1,6 +1,6 @@
 /**
  * Simulador mínimo de Google Apps Script + Google Sheets para ejecutar
- * backend/Code.gs (y Seed.gs) en Node sin desplegarlo en Google.
+ * backend/Code.gs, Reminders.gs y Seed.gs en Node sin desplegarlos en Google.
  */
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
@@ -84,6 +84,8 @@ export function createGasEnv({ withSeed = false } = {}) {
   const ss = new Spreadsheet();
   const props = new Map();
   const logs = [];
+  const sentEmails = [];
+  const triggers = [];
 
   const ctx = vm.createContext({
     console: { log() {}, error: (...a) => logs.push(a.join(' ')), warn() {} },
@@ -99,9 +101,40 @@ export function createGasEnv({ withSeed = false } = {}) {
       getScriptProperties: () => ({
         getProperty: (k) => (props.has(k) ? props.get(k) : null),
         setProperty: (k, v) => props.set(k, v),
+        deleteProperty: (k) => props.delete(k),
+        getProperties: () => Object.fromEntries(props),
       }),
     },
     LockService: { getScriptLock: () => ({ waitLock() {}, releaseLock() {} }) },
+    MailApp: {
+      sendEmail: (to, subject, body) => sentEmails.push({ to, subject, body }),
+      getRemainingDailyQuota: () => 100,
+    },
+    ScriptApp: {
+      getProjectTriggers: () => [...triggers],
+      deleteTrigger: (trigger) => {
+        const index = triggers.indexOf(trigger);
+        if (index !== -1) triggers.splice(index, 1);
+      },
+      newTrigger: (handler) => {
+        const config = { handler };
+        const builder = {
+          timeBased() { return this; },
+          everyDays(days) { config.days = days; return this; },
+          atHour(hour) { config.hour = hour; return this; },
+          inTimezone(timeZone) { config.timeZone = timeZone; return this; },
+          create() {
+            const trigger = {
+              ...config,
+              getHandlerFunction() { return this.handler; },
+            };
+            triggers.push(trigger);
+            return trigger;
+          },
+        };
+        return builder;
+      },
+    },
     ContentService: {
       MimeType: { JSON: 'application/json' },
       createTextOutput: (s) => ({ s, setMimeType() { return this; }, getContent() { return s; } }),
@@ -118,6 +151,7 @@ export function createGasEnv({ withSeed = false } = {}) {
   });
 
   vm.runInContext(readFileSync(resolve(root, 'backend/Code.gs'), 'utf8'), ctx, { filename: 'Code.gs' });
+  vm.runInContext(readFileSync(resolve(root, 'backend/Reminders.gs'), 'utf8'), ctx, { filename: 'Reminders.gs' });
   if (withSeed) vm.runInContext(readFileSync(resolve(root, 'backend/Seed.gs'), 'utf8'), ctx, { filename: 'Seed.gs' });
 
   const run = (code) => vm.runInContext(code, ctx);
@@ -128,5 +162,5 @@ export function createGasEnv({ withSeed = false } = {}) {
     return JSON.parse(run('doPost({ postData: { contents: __req } }).getContent()'));
   };
 
-  return { ctx, ss, props, logs, run, call };
+  return { ctx, ss, props, logs, sentEmails, triggers, run, call };
 }
