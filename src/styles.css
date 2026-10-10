@@ -9,7 +9,31 @@
   --color-fet-yellow: #EDBB00;
 }
 
-html, body { background-color: #f1f5f9; }
+:root {
+  --bg: #f1f5f9;
+  --text: #0f172a;
+  --header-bg: #ffffff;
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --color-fet-green: #005C29;
+  --color-fet-darkgreen: #00431e;
+  --color-fet-yellow: #EDBB00;
+}
+
+.dark {
+  --bg: #0b1220;
+  --text: #e6eef6;
+  --header-bg: #071223;
+  --card-bg: #071223;
+  --muted: #9aa6b2;
+}
+
+html, body { background-color: var(--bg); color: var(--text); }
+
+header, footer, nav, .rounded-xl, .shadow-sm { background-color: var(--header-bg); }
+
+.text-slate-500 { color: var(--muted) !important; }
+
 
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { scrollbar-width: none; }

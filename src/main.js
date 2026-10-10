@@ -39,7 +39,7 @@ function shellHtml() {
             ${state.catalogs.periodo.map((p) => `<option value="${p}" ${p === state.ui.period ? 'selected' : ''}>${p}</option>`).join('')}
           </select>
           <button data-role="theme-toggle" title="Alternar tema" class="rounded-full border px-3 py-1.5 text-xs font-bold bg-white hover:bg-slate-50">
-            ${state.ui.theme === 'dark' ? '🌙 Oscuro' : '🌞 Claro'}
+            ${state.ui.theme === 'dark' ? `${icon('moon', 'w-4 h-4 inline-block align-middle mr-1')}Oscuro` : `${icon('sun', 'w-4 h-4 inline-block align-middle mr-1')}Claro`}
           </button>
           <span title="${isLocal ? 'Modo demostración (datos locales)' : `Conectado · rol ${state.role}`}" class="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold ${isLocal ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-emerald-300 bg-emerald-50 text-emerald-700'}">
             ${icon(isLocal ? 'cloud-off' : 'cloud', 'w-3.5 h-3.5')} ${isLocal ? 'Demostración' : 'Google Sheets'}
@@ -94,6 +94,8 @@ function paint() {
     // Sólo se refresca la barra de periodo/estado cuando cambian los datos, sin recrear toda la cabecera.
     const periodSelect = document.querySelector('[data-role="period-select"]');
     if (periodSelect) periodSelect.innerHTML = state.catalogs.periodo.map((p) => `<option value="${p}" ${p === state.ui.period ? 'selected' : ''}>${p}</option>`).join('');
+    const themeBtn = document.querySelector('[data-role="theme-toggle"]');
+    if (themeBtn) themeBtn.innerHTML = state.ui.theme === 'dark' ? `${icon('moon', 'w-4 h-4 inline-block align-middle mr-1')}Oscuro` : `${icon('sun', 'w-4 h-4 inline-block align-middle mr-1')}Claro`;
   }
 
   const tab = TABS.find((t) => t.id === state.ui.tab) || TABS[0];

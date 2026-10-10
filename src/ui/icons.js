@@ -54,6 +54,8 @@ import cpu from 'lucide-static/icons/cpu.svg?raw';
 import code from 'lucide-static/icons/code.svg?raw';
 import cog from 'lucide-static/icons/cog.svg?raw';
 import eye from 'lucide-static/icons/eye.svg?raw';
+import sun from 'lucide-static/icons/sun.svg?raw';
+import moon from 'lucide-static/icons/moon.svg?raw';
 
 const RAW = {
   'layout-dashboard': layoutDashboard, 'list-checks': listChecks, 'file-text': fileText, calendar,
@@ -66,6 +68,7 @@ const RAW = {
   'key-round': keyRound, database, inbox, filter, 'external-link': externalLink, award,
   'file-check-2': fileCheckTwo, 'file-edit': fileEdit, table, sliders, 'file-spreadsheet': fileSpreadsheet,
   'map-pin': mapPin, globe, cpu, code, cog, eye,
+  sun, moon,
 };
 
 /** Devuelve el marcado SVG de un icono con clases CSS aplicadas. `name` debe existir en RAW. */
