@@ -30,7 +30,7 @@ function shellHtml() {
         <div class="flex items-center gap-3">
           <div class="grid h-11 w-11 place-items-center rounded-xl bg-fet-green text-sm font-black text-white shadow">FET</div>
           <div>
-            <h1 class="text-sm font-bold leading-tight text-slate-800 sm:text-base">Gestion de actividades</h1>
+            <h1 class="text-sm font-bold leading-tight text-slate-800 sm:text-base">Gestión de actividades</h1>
             <p class="text-[11px] leading-tight text-slate-500">Plan de trabajo docente — Fundación Escuela Tecnológica de Neiva</p>
           </div>
         </div>

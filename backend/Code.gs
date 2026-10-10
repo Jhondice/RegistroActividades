@@ -1,6 +1,6 @@
 /**
  * =====================================================================
- *  Gestion de actividades — FET
+ *  Gestión de actividades — FET
  *  Backend: Google Apps Script (Web App) + Google Sheets como base de datos
  * =====================================================================
  *

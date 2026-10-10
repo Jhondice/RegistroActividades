@@ -1,4 +1,4 @@
-# Gestion de actividades — FET
+# Gestión de actividades — FET
 
 Aplicación web para planificar, dar seguimiento y reportar el cumplimiento del plan de
 trabajo docente: dashboard con indicadores, plan de actividades (crear/editar/eliminar),
