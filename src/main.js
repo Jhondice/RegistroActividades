@@ -4,6 +4,7 @@ import { state, subscribe, init, setTab, setPeriodFilter, describeError, toggleT
 import { destroyAllCharts } from './services/charts.js';
 import * as dashboard from './views/dashboard.js';
 import * as plan from './views/plan.js';
+import * as planEspecializacion from './views/plan-especializacion.js';
 import * as informe from './views/informe.js';
 import * as calendario from './views/calendario.js';
 import * as indicadores from './views/indicadores.js';
@@ -13,6 +14,7 @@ import * as configuracion from './views/configuracion.js';
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard', view: dashboard },
   { id: 'plan', label: 'Plan de actividades', icon: 'list-checks', view: plan },
+  { id: 'plan-especializacion', label: 'Plan de Especialización', icon: 'list-checks', view: planEspecializacion, accent: 'violet' },
   { id: 'informe', label: 'Informes', icon: 'file-text', view: informe },
   { id: 'calendario', label: 'Calendario', icon: 'calendar', view: calendario },
   { id: 'indicadores', label: 'Indicadores', icon: 'line-chart', view: indicadores },
@@ -44,10 +46,16 @@ function shellHtml() {
         </div>
       </div>
       <nav class="scrollbar-none mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-4 sm:px-6" data-role="nav">
-        ${TABS.map((t) => `
-          <button data-tab="${t.id}" class="flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-bold transition-colors ${state.ui.tab === t.id ? 'border-fet-green text-fet-green' : 'border-transparent text-slate-500 hover:text-slate-700'}">
+        ${TABS.map((t) => {
+          const isActive = state.ui.tab === t.id;
+          const activeClass = t.accent === 'violet'
+            ? (isActive ? 'border-violet-500 text-violet-700 bg-violet-50' : 'border-transparent text-slate-500 hover:text-violet-700 hover:bg-violet-50')
+            : (isActive ? 'border-fet-green text-fet-green' : 'border-transparent text-slate-500 hover:text-slate-700');
+          return `
+          <button data-tab="${t.id}" class="flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-bold transition-colors ${activeClass}">
             ${icon(t.icon, 'w-4 h-4')} ${t.label}
-          </button>`).join('')}
+          </button>`;
+        }).join('')}
         <div class="flex ml-auto">
           <button data-role="theme-toggle" title="Alternar tema" class="rounded-full border px-3 py-1.5 text-xs font-bold bg-white hover:bg-slate-50">
             ${state.ui.theme === 'dark' ? `${icon('moon', 'w-4 h-4 inline-block align-middle mr-1')}Oscuro` : `${icon('sun', 'w-4 h-4 inline-block align-middle mr-1')}Claro`}
