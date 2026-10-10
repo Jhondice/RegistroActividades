@@ -117,6 +117,79 @@ export function openActivityModal({ activity, catalogs, onSubmit }) {
   });
 }
 
+/**
+ * Abre un modal de solo lectura para ver los detalles de una actividad
+ * @param {{activity: object}} opts
+ */
+export function openActivityViewModal({ activity }) {
+  const root = document.getElementById('modal-root');
+
+  root.innerHTML = `
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 overflow-y-auto" data-role="backdrop">
+      <div class="w-full max-w-lg rounded-2xl bg-white shadow-2xl my-8">
+        <div class="flex items-center justify-between rounded-t-2xl bg-fet-green px-6 py-4 text-white">
+          <h3 class="flex items-center gap-2 text-base font-bold">${icon('eye', 'w-5 h-5')} Actividad #${activity.numero}</h3>
+          <button type="button" data-role="close" class="text-white/80 hover:text-white">${icon('x', 'w-5 h-5')}</button>
+        </div>
+        <div class="space-y-4 p-6 text-xs">
+          <div>
+            <label class="mb-1 block font-bold text-slate-700">Nombre / descripción</label>
+            <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-800">${esc(activity.nombre)}</p>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="mb-1 block font-bold text-slate-700">Periodo</label>
+              <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">${esc(activity.periodo)}</p>
+            </div>
+            <div>
+              <label class="mb-1 block font-bold text-slate-700">Tipo</label>
+              <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">${esc(activity.tipo)}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="mb-1 block font-bold text-slate-700">Línea estratégica</label>
+              <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">${esc(activity.linea)}</p>
+            </div>
+            <div>
+              <label class="mb-1 block font-bold text-slate-700">Responsable</label>
+              <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">${esc(activity.responsable)}</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="mb-1 block font-bold text-slate-700">Fecha inicio</label>
+              <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">${activity.fecha_inicio}</p>
+            </div>
+            <div>
+              <label class="mb-1 block font-bold text-slate-700">Fecha fin</label>
+              <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">${activity.fecha_fin}</p>
+            </div>
+            <div>
+              <label class="mb-1 block font-bold text-slate-700">% Avance</label>
+              <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-center font-bold text-slate-600">${activity.avance}%</p>
+            </div>
+          </div>
+          <div>
+            <label class="mb-1 block font-bold text-slate-700">Estado</label>
+            <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600">${esc(activity.estado_efectivo || activity.estado)}</p>
+          </div>
+          <div>
+            <label class="mb-1 block font-bold text-slate-700">Observaciones</label>
+            <p class="rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-slate-600 min-h-[60px]">${esc(activity.observaciones) || '<span class="italic text-slate-400">Sin observaciones</span>'}</p>
+          </div>
+          <div class="flex items-center justify-end gap-2 border-t pt-4">
+            <button type="button" data-role="close" class="rounded-lg border border-slate-300 px-4 py-2 font-bold text-slate-600 hover:bg-slate-100">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  const close = () => { root.innerHTML = ''; };
+  root.querySelector('[data-role="close"]').addEventListener('click', close);
+  root.querySelector('[data-role="backdrop"]').addEventListener('click', (e) => { if (e.target === e.currentTarget) close(); });
+}
+
 function clearErrors(form) {
   form.querySelectorAll('[data-err]').forEach((el) => { el.textContent = ''; el.classList.add('hidden'); });
 }

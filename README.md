@@ -1,4 +1,4 @@
-# Seguimiento y Control de Actividades — FET
+# Gestión de actividades — FET
 
 Aplicación web para planificar, dar seguimiento y reportar el cumplimiento del plan de
 trabajo docente: dashboard con indicadores, plan de actividades (crear/editar/eliminar),
@@ -90,24 +90,34 @@ navegador. Puede restablecer los datos de ejemplo en cualquier momento desde **C
    [`backend/Code.gs`](backend/Code.gs) de este repositorio.
 4. Cree un segundo archivo (ícono `+` → "Script") llamado `Seed` y pegue el contenido de
    [`backend/Seed.gs`](backend/Seed.gs) (opcional: sólo si quiere cargar datos de ejemplo).
-5. Con el archivo `Code.gs` abierto, seleccione la función `setup` en el menú desplegable de
-   funciones (junto al botón ▶) y presione **Ejecutar**. La primera vez, Google pedirá
-   autorizar el script sobre su propia cuenta (es normal: el script sólo accede a esta hoja).
-6. Aparecerá un cuadro con dos tokens (`ADMIN_TOKEN` y `VIEWER_TOKEN`). **Cópielos y guárdelos
+5. Cree otro archivo de secuencia de comandos llamado `Reminders` y pegue el contenido de
+   [`backend/Reminders.gs`](backend/Reminders.gs).
+6. Configure la zona horaria del proyecto como `America/Bogota`. Ejecute `setup` para preparar
+   las hojas y los tokens; después ejecute `setupActivityReminders` para instalar el activador
+   diario y `authorizeActivityReminders` para autorizar el envío de correo. Google solicitará
+   los permisos necesarios la primera vez.
+7. Aparecerá un cuadro con dos tokens (`ADMIN_TOKEN` y `VIEWER_TOKEN`). **Cópielos y guárdelos
    en un lugar seguro** — no los suba nunca al repositorio de GitHub.
    - `ADMIN_TOKEN`: acceso completo (crear, editar, eliminar).
    - `VIEWER_TOKEN`: solo lectura (útil para compartir un enlace de "solo consulta").
-7. (Opcional) Recargue la hoja de cálculo: aparecerá un menú **"FET Seguimiento"** con
+8. (Opcional) Recargue la hoja de cálculo: aparecerá un menú **"FET Seguimiento"** con
    accesos directos a `setup`, mostrar/regenerar tokens y cargar datos de ejemplo
    (`Cargar datos de ejemplo`, si copió `Seed.gs`).
-8. Menú **Implementar → Nueva implementación**:
+9. Menú **Implementar → Nueva implementación**:
    - Tipo: **Aplicación web**.
    - Ejecutar como: **Yo** (su cuenta).
    - Quién tiene acceso: **Cualquier usuario**.
    - Presione **Implementar** y copie la **URL del Web App** (termina en `/exec`).
 
 Puede volver a ejecutar `setup()` cuando quiera sin riesgo: es idempotente (no borra datos
-existentes). Si necesita invalidar los tokens actuales, use `rotateTokens` desde el menú.
+existentes). `setupActivityReminders()` también es idempotente y deja un solo activador diario.
+Si necesita invalidar los tokens actuales, use `rotateTokens` desde el menú.
+
+El activador revisa las actividades todos los días alrededor de las 8:00 a. m. y envía un
+correo a `direccion_software@fet.edu.co` cuando una actividad no completada vence en 3 días
+y, si aún no se ha completado, nuevamente cuando vence en 1 día. Cada aviso se envía una sola
+vez por actividad, plazo y fecha de finalización. La primera ejecución puede pedir autorización
+para enviar correos desde la cuenta propietaria del script.
 
 ### 2. Publicar el sitio en GitHub Pages
 

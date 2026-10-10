@@ -1,9 +1,10 @@
 import './styles.css';
 import { icon } from './ui/icons.js';
-import { state, subscribe, init, setTab, setPeriodFilter, describeError } from './state/store.js';
+import { state, subscribe, init, setTab, setPeriodFilter, describeError, toggleTheme } from './state/store.js';
 import { destroyAllCharts } from './services/charts.js';
 import * as dashboard from './views/dashboard.js';
 import * as plan from './views/plan.js';
+import * as planEspecializacion from './views/plan-especializacion.js';
 import * as informe from './views/informe.js';
 import * as calendario from './views/calendario.js';
 import * as indicadores from './views/indicadores.js';
@@ -13,6 +14,7 @@ import * as configuracion from './views/configuracion.js';
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: 'layout-dashboard', view: dashboard },
   { id: 'plan', label: 'Plan de actividades', icon: 'list-checks', view: plan },
+  { id: 'plan-especializacion', label: 'Plan de Especialización', icon: 'list-checks', view: planEspecializacion, accent: 'violet' },
   { id: 'informe', label: 'Informes', icon: 'file-text', view: informe },
   { id: 'calendario', label: 'Calendario', icon: 'calendar', view: calendario },
   { id: 'indicadores', label: 'Indicadores', icon: 'line-chart', view: indicadores },
@@ -30,7 +32,7 @@ function shellHtml() {
         <div class="flex items-center gap-3">
           <div class="grid h-11 w-11 place-items-center rounded-xl bg-fet-green text-sm font-black text-white shadow">FET</div>
           <div>
-            <h1 class="text-sm font-bold leading-tight text-slate-800 sm:text-base">Seguimiento y Control de Actividades</h1>
+            <h1 class="text-sm font-bold leading-tight text-slate-800 sm:text-base">Gestión de actividades</h1>
             <p class="text-[11px] leading-tight text-slate-500">Plan de trabajo docente — Fundación Escuela Tecnológica de Neiva</p>
           </div>
         </div>
@@ -44,10 +46,21 @@ function shellHtml() {
         </div>
       </div>
       <nav class="scrollbar-none mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-4 sm:px-6" data-role="nav">
-        ${TABS.map((t) => `
-          <button data-tab="${t.id}" class="flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-bold transition-colors ${state.ui.tab === t.id ? 'border-fet-green text-fet-green' : 'border-transparent text-slate-500 hover:text-slate-700'}">
+        ${TABS.map((t) => {
+          const isActive = state.ui.tab === t.id;
+          const activeClass = t.accent === 'violet'
+            ? (isActive ? 'border-violet-500 text-violet-700 bg-violet-50' : 'border-transparent text-slate-500 hover:text-violet-700 hover:bg-violet-50')
+            : (isActive ? 'border-fet-green text-fet-green' : 'border-transparent text-slate-500 hover:text-slate-700');
+          return `
+          <button data-tab="${t.id}" class="flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-bold transition-colors ${activeClass}">
             ${icon(t.icon, 'w-4 h-4')} ${t.label}
-          </button>`).join('')}
+          </button>`;
+        }).join('')}
+        <div class="flex ml-auto">
+          <button data-role="theme-toggle" title="Alternar tema" class="rounded-full border px-3 py-1.5 text-xs font-bold bg-white hover:bg-slate-50">
+            ${state.ui.theme === 'dark' ? `${icon('moon', 'w-4 h-4 inline-block align-middle mr-1')}Oscuro` : `${icon('sun', 'w-4 h-4 inline-block align-middle mr-1')}Claro`}
+          </button>
+        </div>
       </nav>
     </header>
     <main class="mx-auto max-w-[1400px] px-4 py-6 sm:px-6" id="view-root"></main>
@@ -91,6 +104,8 @@ function paint() {
     // Sólo se refresca la barra de periodo/estado cuando cambian los datos, sin recrear toda la cabecera.
     const periodSelect = document.querySelector('[data-role="period-select"]');
     if (periodSelect) periodSelect.innerHTML = state.catalogs.periodo.map((p) => `<option value="${p}" ${p === state.ui.period ? 'selected' : ''}>${p}</option>`).join('');
+    const themeBtn = document.querySelector('[data-role="theme-toggle"]');
+    if (themeBtn) themeBtn.innerHTML = state.ui.theme === 'dark' ? `${icon('moon', 'w-4 h-4 inline-block align-middle mr-1')}Oscuro` : `${icon('sun', 'w-4 h-4 inline-block align-middle mr-1')}Claro`;
   }
 
   const tab = TABS.find((t) => t.id === state.ui.tab) || TABS[0];
@@ -104,6 +119,8 @@ function wireShell() {
   document.querySelectorAll('[data-tab]').forEach((btn) => btn.addEventListener('click', () => setTab(btn.dataset.tab)));
   const periodSelect = document.querySelector('[data-role="period-select"]');
   if (periodSelect) periodSelect.addEventListener('change', (e) => setPeriodFilter(e.target.value));
+  const themeBtn = document.querySelector('[data-role="theme-toggle"]');
+  if (themeBtn) themeBtn.addEventListener('click', () => toggleTheme());
 }
 
 subscribe(paint);

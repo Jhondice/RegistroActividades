@@ -1,6 +1,6 @@
 /**
  * =====================================================================
- *  Seguimiento y Control de Actividades — FET
+ *  Gestión de actividades — FET
  *  Backend: Google Apps Script (Web App) + Google Sheets como base de datos
  * =====================================================================
  *
@@ -496,6 +496,8 @@ function onOpen() {
       .addItem('1. Configurar hojas y tokens (setup)', 'setup')
       .addItem('Mostrar tokens de acceso', 'showTokens')
       .addItem('Regenerar tokens', 'rotateTokens')
+      .addItem('Configurar recordatorios diarios', 'setupActivityReminders')
+      .addItem('Autorizar recordatorios por correo', 'authorizeActivityReminders')
       .addSeparator()
       .addItem('Cargar datos de ejemplo', 'seedDemoData')
       .addToUi();

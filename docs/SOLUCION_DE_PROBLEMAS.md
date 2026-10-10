@@ -27,6 +27,20 @@ Cada edición de `Code.gs` requiere publicar una **nueva versión** de la implem
 existente (no basta con guardar el archivo). Vaya a **Implementar → Gestionar
 implementaciones**, edite la implementación activa y seleccione "Nueva versión".
 
+### No llegan los recordatorios por correo
+- Confirme que creó el archivo `Reminders.gs`, guardó el código y ejecutó
+  `setupActivityReminders()`. Debe existir el activador diario `sendActivityReminders` en
+  **Activadores**.
+- Ejecute manualmente `authorizeActivityReminders()` desde Apps Script y acepte el permiso
+  de correo solicitado por Google.
+- Revise **Ejecuciones** para ver si Apps Script informa de falta de autorización o de cuota.
+- Los correos salen de la cuenta propietaria del script hacia
+  `direccion_software@fet.edu.co`; esa cuenta debe autorizar el permiso de envío de correo.
+- Sólo se avisa a actividades no completadas exactamente 3 días y 1 día antes de su fecha
+  final, según la zona horaria del proyecto (se recomienda `America/Bogota`).
+- Ejecutar de nuevo `setupActivityReminders()` no crea activadores duplicados. Un mismo aviso no
+  se reenvía para la misma actividad, plazo y fecha final.
+
 ### "La hoja ya contiene actividades; no se cargaron datos de ejemplo."
 `seedDemoData()` sólo funciona sobre una hoja "Actividades" vacía, para no mezclar datos
 reales con datos de ejemplo. Si de verdad quiere reiniciar con los datos de ejemplo, borre a
