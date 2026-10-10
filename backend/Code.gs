@@ -1,6 +1,6 @@
 /**
  * =====================================================================
- *  Seguimiento y Control de Actividades — FET
+ *  Gestion de actividades — FET
  *  Backend: Google Apps Script (Web App) + Google Sheets como base de datos
  * =====================================================================
  *

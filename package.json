@@ -1,7 +1,7 @@
 {
   "name": "fet-seguimiento-actividades",
   "version": "1.0.0",
-  "description": "Seguimiento y control de actividades del plan de trabajo docente (FET). Frontend estático (Vite) + Google Apps Script + Google Sheets. Publicable gratis en GitHub Pages.",
+  "description": "Gestion de actividades del plan de trabajo docente (FET). Frontend estático (Vite) + Google Apps Script + Google Sheets. Publicable gratis en GitHub Pages.",
   "private": true,
   "type": "module",
   "license": "MIT",

@@ -28,10 +28,10 @@ function shellHtml() {
     <header class="border-b border-slate-200 bg-white shadow-sm">
       <div class="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <div class="flex items-center gap-3">
-          <div class="grid h-11 w-11 place-items-center rounded-xl bg-fet-green text-sm font-black text-white shadow">ET</div>
+          <div class="grid h-11 w-11 place-items-center rounded-xl bg-fet-green text-sm font-black text-white shadow">FET</div>
           <div>
-            <h1 class="text-sm font-bold leading-tight text-slate-800 sm:text-base">Seguimiento y Control de Actividades</h1>
-            <p class="text-[11px] leading-tight text-slate-500">Plan de Trabajo Dirección Software — Fundación Escuela Tecnológica de Neiva</p>
+            <h1 class="text-sm font-bold leading-tight text-slate-800 sm:text-base">Gestion de actividades</h1>
+            <p class="text-[11px] leading-tight text-slate-500">Plan de trabajo docente — Fundación Escuela Tecnológica de Neiva</p>
           </div>
         </div>
         <div class="flex items-center gap-2">
