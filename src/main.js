@@ -38,9 +38,6 @@ function shellHtml() {
           <select data-role="period-select" class="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-fet-green">
             ${state.catalogs.periodo.map((p) => `<option value="${p}" ${p === state.ui.period ? 'selected' : ''}>${p}</option>`).join('')}
           </select>
-          <button data-role="theme-toggle" title="Alternar tema" class="rounded-full border px-3 py-1.5 text-xs font-bold bg-white hover:bg-slate-50">
-            ${state.ui.theme === 'dark' ? `${icon('moon', 'w-4 h-4 inline-block align-middle mr-1')}Oscuro` : `${icon('sun', 'w-4 h-4 inline-block align-middle mr-1')}Claro`}
-          </button>
           <span title="${isLocal ? 'Modo demostración (datos locales)' : `Conectado · rol ${state.role}`}" class="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold ${isLocal ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-emerald-300 bg-emerald-50 text-emerald-700'}">
             ${icon(isLocal ? 'cloud-off' : 'cloud', 'w-3.5 h-3.5')} ${isLocal ? 'Demostración' : 'Google Sheets'}
           </span>
@@ -51,6 +48,11 @@ function shellHtml() {
           <button data-tab="${t.id}" class="flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-bold transition-colors ${state.ui.tab === t.id ? 'border-fet-green text-fet-green' : 'border-transparent text-slate-500 hover:text-slate-700'}">
             ${icon(t.icon, 'w-4 h-4')} ${t.label}
           </button>`).join('')}
+        <div class="flex ml-auto">
+          <button data-role="theme-toggle" title="Alternar tema" class="rounded-full border px-3 py-1.5 text-xs font-bold bg-white hover:bg-slate-50">
+            ${state.ui.theme === 'dark' ? `${icon('moon', 'w-4 h-4 inline-block align-middle mr-1')}Oscuro` : `${icon('sun', 'w-4 h-4 inline-block align-middle mr-1')}Claro`}
+          </button>
+        </div>
       </nav>
     </header>
     <main class="mx-auto max-w-[1400px] px-4 py-6 sm:px-6" id="view-root"></main>

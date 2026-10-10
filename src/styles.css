@@ -28,11 +28,12 @@
   --muted: #9aa6b2;
 }
 
-html, body { background-color: var(--bg); color: var(--text); }
 
-header, footer, nav, .rounded-xl, .shadow-sm { background-color: var(--header-bg); }
+html, body { background-color: var(--bg); color: var(--text); transition: background-color .25s ease, color .25s ease; }
 
-.text-slate-500 { color: var(--muted) !important; }
+header, footer, nav, .rounded-xl, .shadow-sm { background-color: var(--header-bg); transition: background-color .25s ease, color .25s ease, border-color .25s ease; }
+
+.text-slate-500 { color: var(--muted) !important; transition: color .25s ease; }
 
 
 .scrollbar-none::-webkit-scrollbar { display: none; }
